@@ -29,7 +29,7 @@ If you are interested, just check [here](https://github.com/peakhunt/FK7B0M1-VBT
 ### 1. Clone the Repository
 Pull the project and automatically download the pinned LVGL v9.5.0 submodule package:
 ```bash
-git clone --recursive https://github.com/peakhunt/FK7B0M1-VBT6-FREERTOS
+git clone --recursive https://github.com/peakhunt/FK743M2-IIT6-V1.1-FREERTOS
 cd FK743M2-IIT6-V1.1-FREERTOS
 ```
 
