@@ -7,7 +7,7 @@ Yes another chinese stm32 board.
 ## Features
 Like H7B board, i2c pin allocation is the only complaint I have. Had to use bit banging.  
 It uses LVGL Direct Mode using Double framebuffer on external SDRAM.  
-The performance is so so, especially considering the gigantic chip size.  
+The performance is below expectations, especially considering the gigantic chip size.  
 Anyway, it is what it is.
 
 ## LCD Screen
