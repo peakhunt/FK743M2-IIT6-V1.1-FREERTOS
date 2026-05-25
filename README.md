@@ -40,7 +40,6 @@ make -j$(nproc)
 ```
 
 ### 3. Flash the Board
-Wipes the chip and forces `st-flash` to write past the default 128 KB factory threshold:
 ```bash
 make stflash
 ```
