@@ -9,7 +9,11 @@
 
 #include "lvgl.h"
 #include "src/drivers/display/st_ltdc/lv_st_ltdc.h"
-#include "demos/widgets/lv_demo_widgets.h" 
+
+#include "demos/music/lv_demo_music.h"
+#include "demos/widgets/lv_demo_widgets.h"
+#include "demos/benchmark/lv_demo_benchmark.h"
+
 #include "ft5406.h"
 
 extern LTDC_HandleTypeDef hltdc;
@@ -88,7 +92,9 @@ lvgl_task(void* arg)
     lv_timer_set_period(read_timer, 17);
   }
 
-  lv_demo_widgets();
+  //lv_demo_music()
+  //lv_demo_widgets();
+  lv_demo_benchmark();
 
   while(true)
   {
