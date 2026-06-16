@@ -19,11 +19,19 @@
 //#define GT911_ADDR_WRITE  0xBA
 //#define GT911_ADDR_READ   0xBB
 
+#if 0
 #define I2C_SCL_HIGH()   (GPIOE->BSRR = GPIO_BSRR_BS5)
 #define I2C_SCL_LOW()    (GPIOE->BSRR = GPIO_BSRR_BR5)
 #define I2C_SDA_HIGH()   (GPIOE->BSRR = GPIO_BSRR_BS6)
 #define I2C_SDA_LOW()    (GPIOE->BSRR = GPIO_BSRR_BR6)
 #define I2C_SDA_READ()   ((GPIOE->IDR & GPIO_IDR_ID6) != 0)
+#else
+#define I2C_SCL_HIGH()   (GPIOI->BSRR = GPIO_BSRR_BS11)
+#define I2C_SCL_LOW()    (GPIOI->BSRR = GPIO_BSRR_BR11)
+#define I2C_SDA_HIGH()   (GPIOI->BSRR = GPIO_BSRR_BS8)
+#define I2C_SDA_LOW()    (GPIOI->BSRR = GPIO_BSRR_BR8)
+#define I2C_SDA_READ()   ((GPIOI->IDR & GPIO_IDR_ID8) != 0)
+#endif
 
 
 static int16_t touch_cached_x = 0;
@@ -42,8 +50,13 @@ i2c_delay(void)
 static inline void
 i2c_sda_mode_output(void)
 {
+#if 0
   GPIOE->MODER &= ~(3U << (6 * 2)); 
   GPIOE->MODER |=  (1U << (6 * 2)); 
+#else
+  GPIOI->MODER &= ~(3U << (8 * 2)); // Clear mode bits for pin 8
+  GPIOI->MODER |=  (1U << (8 * 2)); // Set as General Purpose Output
+#endif
   __DSB();
   __ISB();
 }
@@ -51,7 +64,11 @@ i2c_sda_mode_output(void)
 static inline void
 i2c_sda_mode_input(void)
 {
+#if 0
   GPIOE->MODER &= ~(3U << (6 * 2)); 
+#else
+  GPIOI->MODER &= ~(3U << (8 * 2)); // Set as Input mode (00)
+#endif
   __DSB();
   __ISB();
 }
@@ -227,7 +244,7 @@ gt911_get(int16_t* x, int16_t* y, bool* pressed)
 
 void HAL_GPIO_EXTI_Callback(uint16_t GPIO_Pin)
 {
-  if (GPIO_Pin & GPIO_PIN_4)
+  if (GPIO_Pin & GPIO_PIN_3)
   {
     BaseType_t xHigherPriorityTaskWoken = pdFALSE;
     xTaskNotifyFromISR(gt911_task_handle, 0x01, eSetBits, &xHigherPriorityTaskWoken);
@@ -286,10 +303,10 @@ gt911_read_modify_write_config(void)
   live_cfg[3] = 0x10; // 0x804A: Y Output Resolution LSB
   live_cfg[4] = 0x01; // 0x804B: Y Output Resolution MSB (0x0110 = 272)
 #else
-  live_cfg[3] = 0xE0; // 0x8048: X Output Resolution LSB
-  live_cfg[4] = 0x01; // 0x8049: X Output Resolution MSB (0x01E0 = 480)
-  live_cfg[1] = 0x10; // 0x804A: Y Output Resolution LSB
-  live_cfg[2] = 0x01; // 0x804B: Y Output Resolution MSB (0x0110 = 272)
+  live_cfg[3] = 0x20; // 0x8048: X Output Resolution LSB
+  live_cfg[4] = 0x03; // 0x8049: X Output Resolution MSB (0x01E0 = 800)
+  live_cfg[1] = 0xe0; // 0x804A: Y Output Resolution LSB
+  live_cfg[2] = 0x01; // 0x804B: Y Output Resolution MSB (0x0110 = 480)
 #endif
 
   live_cfg[5] = 0x01;   // 0x804c, num touch count
