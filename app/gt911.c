@@ -221,9 +221,8 @@ gt911_touch_untouch(void)
   {
     if(verified_pressed)
     {
-      // Retaining your original display structural axis configuration layout swaps
-      touch_cached_x = raw_y; 
-      touch_cached_y = raw_x;
+      touch_cached_x = raw_x;
+      touch_cached_y = raw_y;
     }
     touch_cached_pressed = verified_pressed;
     xSemaphoreGive(data_mutex);
@@ -292,22 +291,13 @@ gt911_read_modify_write_config(void)
 
   live_cfg[0] += 1;
 
-  //live_cfg[6] &= ~0x03;
-  //live_cfg[6] |= 0x01;     // 0x804d, falling edge irq
-  live_cfg[6] = 0x01;     // 0x804d, falling edge irq
+  live_cfg[6] = 0x09;     // 0x804d, falling edge irq. x/y swapped
 
   // Force your 480x272 display geometry limits into the active matrix
-#if 0 // why? x2y doesn't work and only this works. why?
-  live_cfg[1] = 0xE0; // 0x8048: X Output Resolution LSB
-  live_cfg[2] = 0x01; // 0x8049: X Output Resolution MSB (0x01E0 = 480)
-  live_cfg[3] = 0x10; // 0x804A: Y Output Resolution LSB
-  live_cfg[4] = 0x01; // 0x804B: Y Output Resolution MSB (0x0110 = 272)
-#else
-  live_cfg[3] = 0x20; // 0x8048: X Output Resolution LSB
-  live_cfg[4] = 0x03; // 0x8049: X Output Resolution MSB (0x01E0 = 800)
-  live_cfg[1] = 0xe0; // 0x804A: Y Output Resolution LSB
-  live_cfg[2] = 0x01; // 0x804B: Y Output Resolution MSB (0x0110 = 480)
-#endif
+  live_cfg[1] = 0x20; // 0x8048: X Output Resolution LSB
+  live_cfg[2] = 0x03; // 0x8049: X Output Resolution MSB (0x01E0 = 800)
+  live_cfg[3] = 0xe0; // 0x804A: Y Output Resolution LSB
+  live_cfg[4] = 0x01; // 0x804B: Y Output Resolution MSB (0x0110 = 480)
 
   live_cfg[5] = 0x01;   // 0x804c, num touch count
 
